@@ -8,6 +8,68 @@ typedef struct
     int width;
 }Brick;
 
+
+#define SIZE 100
+typedef struct node_s {
+	int priority;
+	void *data;
+
+}node;
+
+typedef struct
+{
+	node nodes[SIZE];
+	int head, tail;
+	//size_t numElements;
+	//size_t elementsize;
+}PriorityQueue;
+
+void *enqueue(PriorityQueue *pq, int priorty, void *value)
+{
+	if ((pq->tail + 1) % SIZE == pq->head)
+	{
+		printf("queue overflow");
+
+	}
+	pq->tail = pq->tail + 1 % SIZE;
+	pq->nodes[pq->tail].data = value;
+	pq->nodes[pq->tail].priority = priorty;
+}
+
+int *dequeue(PriorityQueue *pq)
+{
+	if (pq->head == pq->tail)
+	{
+		printf("priority underflow");
+
+		void *value;
+		node temp;
+
+		int i;
+		int max_priority = pq->head;
+		for (i = pq->head; i != pq->tail; (i = i + 1 % SIZE)
+		{
+			if (pq->nodes[max_priority].priority < pq->nodes[i].priority)
+			{
+				max_priority = i;
+					value = pq->nodes[i].data;
+			}
+
+		}
+		for (i = max_priority; i != pq->tail; (i = i + 1) % SIZE)
+		{
+			temp = pq->nodes[i];
+			pq->nodes[i] = pq->nodes[i + 1 % SIZE];
+			pq->nodes[i + 1 % SIZE] = temp;
+		}
+		pq->tail = (pq->tail - 1) % SIZE;
+		//pq->head = pq->head + 1 % SIZE;
+
+
+
+
+
+
 void draw_stack(Sprite *brick,Vector2D start,Brick *bricklist,unsigned int count)
 {
     unsigned int i,j;
