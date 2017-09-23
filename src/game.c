@@ -66,6 +66,7 @@ int *dequeue(PriorityQueue *pq)
 		//pq->head = pq->head + 1 % SIZE;
 
 
+	}
 
 
 
