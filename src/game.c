@@ -38,21 +38,22 @@ void *enqueue(PriorityQueue *pq, int priorty, void *value)
 
 int *dequeue(PriorityQueue *pq)
 {
+	void *value;
+	node temp;
+
+	int i;
 	if (pq->head == pq->tail)
 	{
 		printf("priority underflow");
 
-		void *value;
-		node temp;
 
-		int i;
 		int max_priority = pq->head;
-		for (i = pq->head; i != pq->tail; (i = i + 1 % SIZE)
+		for (i = pq->head; i != pq->tail; (i = i + 1 % SIZE))
 		{
 			if (pq->nodes[max_priority].priority < pq->nodes[i].priority)
 			{
 				max_priority = i;
-					value = pq->nodes[i].data;
+				value = pq->nodes[i].data;
 			}
 
 		}
@@ -67,7 +68,7 @@ int *dequeue(PriorityQueue *pq)
 
 
 	}
-
+}
 
 
 
