@@ -9,7 +9,7 @@ typedef struct
 }Brick;
 
 
-#define SIZE 100
+//#define SIZE 100
 typedef struct node_s {
 	int priority;
 	void *data;
@@ -28,7 +28,7 @@ void *enqueue(PriorityQueue *pq, int priorty, void *value)
 {
 	if ((pq->tail + 1) % SIZE == pq->head)
 	{
-		printf("queue overflow");
+		//printf("queue overflow");
 
 	}
 	pq->tail = pq->tail + 1 % SIZE;
@@ -44,9 +44,9 @@ int *dequeue(PriorityQueue *pq)
 	int i;
 	if (pq->head == pq->tail)
 	{
-		printf("priority underflow");
+		//printf("priority underflow");
 
-
+	}
 		int max_priority = pq->head;
 		for (i = pq->head; i != pq->tail; (i = i + 1 % SIZE))
 		{
@@ -57,18 +57,17 @@ int *dequeue(PriorityQueue *pq)
 			}
 
 		}
-		for (i = max_priority; i != pq->tail; (i = i + 1) % SIZE)
-		{
-			temp = pq->nodes[i];
-			pq->nodes[i] = pq->nodes[i + 1 % SIZE];
-			pq->nodes[i + 1 % SIZE] = temp;
-		}
+			for (i = max_priority; i != pq->tail; (i = i + 1) % SIZE)
+			{
+				temp = pq->nodes[i];
+				pq->nodes[i] = pq->nodes[i + 1 % SIZE];
+				pq->nodes[i + 1 % SIZE] = temp;
+			}
 		pq->tail = (pq->tail - 1) % SIZE;
 		//pq->head = pq->head + 1 % SIZE;
 
 
 	}
-}
 
 
 
@@ -109,6 +108,9 @@ int main(int argc, char * argv[])
     int done = 0;
     const Uint8 * keys;
     Sprite *sprite,*brick;
+	PriorityQueue *queue;
+
+
     static Brick bricklist[] = 
     {
         {2},  
@@ -123,11 +125,14 @@ int main(int argc, char * argv[])
         {22}
     };
     
+
     int mx,my;
     float mf = 0;
     Sprite *mouse;
     Vector4D mouseColor = {0,0,255,200};
    
+
+
     /*program initializtion*/
     init_logger("gf2d.log");
     slog("---==== BEGIN ====---");
