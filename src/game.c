@@ -26,8 +26,6 @@ typedef struct
 
 void *enqueue(PriorityQueue *pq, int priorty, void *value)
 {
-	pq->tail = 0;
-	pq->head = -1;
 
 	if ((pq->tail + 1) % SIZE == pq->head)
 	{
@@ -35,12 +33,15 @@ void *enqueue(PriorityQueue *pq, int priorty, void *value)
 		
 
 	}
-	pq->tail = pq->tail + 1 % SIZE;
+	if (pq->head == -1)
+		pq->head = pq->tail;
 	pq->nodes[pq->tail].data = value; //this
 	pq->nodes[pq->tail].priority = priorty;
+	pq->tail = pq->tail + 1 % SIZE;
+
 }
 
-int *dequeue(PriorityQueue *pq)
+void *dequeue(PriorityQueue *pq)
 {
 	void *value = NULL;
 	node temp;
@@ -51,7 +52,8 @@ int *dequeue(PriorityQueue *pq)
 		//printf("priority underflow");
 	}
 		int max_priority = pq->head;
-		for (i = pq->head; i != pq->tail; i += (i + 1 % SIZE))
+		value = pq->nodes[max_priority].data;
+		for (i = pq->head; i != pq->tail; i++)
 		{
 			if (pq->nodes[max_priority].priority < pq->nodes[i].priority)
 			{
@@ -60,17 +62,18 @@ int *dequeue(PriorityQueue *pq)
 			}
 
 		}
-			for (i = max_priority; i != pq->tail; i += (i + 1 % SIZE))
+			for (i = max_priority; i != pq->tail-1; i++)
 			{
 				temp = pq->nodes[i];
-				pq->nodes[i] = pq->nodes[i + 1 % SIZE];
-				pq->nodes[i + 1 % SIZE] = temp;
+				pq->nodes[i] = pq->nodes[i+1];
+				pq->nodes[i+1] = temp;
 			}
-		pq->tail = (pq->tail - 1) % SIZE;
+		pq->tail--;
+		if (pq->tail == 0)
+			pq->head = -1;
 		//pq->head = (pq->head + 1) % SIZE;
-
-
-	}
+		return value;
+}
 
 
 
@@ -112,8 +115,10 @@ int main(int argc, char * argv[])
 	int i;
     const Uint8 * keys;
     Sprite *sprite,*brick;
-	PriorityQueue *queue;
+	PriorityQueue queue;
 
+	queue.tail = 0;
+	queue.head = -1;
 	
     static Brick bricklist[] = 
     {
@@ -129,6 +134,7 @@ int main(int argc, char * argv[])
         {22}
     };
     
+	Brick newList[SIZE];
 
     int mx,my;
     float mf = 0;
@@ -163,10 +169,16 @@ int main(int argc, char * argv[])
 	//}
 	for (i = 0; i < SIZE; i++)
 	{
-		enqueue(&queue, &bricklist[i], bricklist->width);
+		enqueue(&queue, bricklist[i].width, &bricklist[i]);
+	}
+	int size = 0;
+	while (queue.head != -1)
+	{
+		
+		newList[size++] = *((Brick*)dequeue(&queue));
+		
 	}
 	
-	dequeue(&queue);
 	
     
 	sprite = gf2d_sprite_load_image("images/backgrounds/bg_flat.png");
@@ -190,7 +202,7 @@ int main(int argc, char * argv[])
             //backgrounds drawn first
             gf2d_sprite_draw_image(sprite,vector2d(0,0));
             
-            draw_stack(brick,vector2d(600,700),bricklist,10);
+            draw_stack(brick,vector2d(600,700),newList,10);
             
             //UI elements last
             gf2d_sprite_draw(
