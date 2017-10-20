@@ -9,7 +9,7 @@ typedef struct
 }Brick;
 
 
-//#define SIZE 100
+#define SIZE 10
 typedef struct node_s {
 	int priority;
 	void *data;
@@ -26,29 +26,32 @@ typedef struct
 
 void *enqueue(PriorityQueue *pq, int priorty, void *value)
 {
+	pq->tail = 0;
+	pq->head = -1;
+
 	if ((pq->tail + 1) % SIZE == pq->head)
 	{
 		//printf("queue overflow");
+		
 
 	}
 	pq->tail = pq->tail + 1 % SIZE;
-	pq->nodes[pq->tail].data = value;
+	pq->nodes[pq->tail].data = value; //this
 	pq->nodes[pq->tail].priority = priorty;
 }
 
 int *dequeue(PriorityQueue *pq)
 {
-	void *value;
+	void *value = NULL;
 	node temp;
 
 	int i;
 	if (pq->head == pq->tail)
 	{
 		//printf("priority underflow");
-
 	}
 		int max_priority = pq->head;
-		for (i = pq->head; i != pq->tail; (i = i + 1 % SIZE))
+		for (i = pq->head; i != pq->tail; i += (i + 1 % SIZE))
 		{
 			if (pq->nodes[max_priority].priority < pq->nodes[i].priority)
 			{
@@ -57,14 +60,14 @@ int *dequeue(PriorityQueue *pq)
 			}
 
 		}
-			for (i = max_priority; i != pq->tail; (i = i + 1) % SIZE)
+			for (i = max_priority; i != pq->tail; i += (i + 1 % SIZE))
 			{
 				temp = pq->nodes[i];
 				pq->nodes[i] = pq->nodes[i + 1 % SIZE];
 				pq->nodes[i + 1 % SIZE] = temp;
 			}
 		pq->tail = (pq->tail - 1) % SIZE;
-		//pq->head = pq->head + 1 % SIZE;
+		//pq->head = (pq->head + 1) % SIZE;
 
 
 	}
@@ -106,11 +109,12 @@ int main(int argc, char * argv[])
 {
     /*variable declarations*/
     int done = 0;
+	int i;
     const Uint8 * keys;
     Sprite *sprite,*brick;
 	PriorityQueue *queue;
 
-
+	
     static Brick bricklist[] = 
     {
         {2},  
@@ -149,11 +153,28 @@ int main(int argc, char * argv[])
     SDL_ShowCursor(SDL_DISABLE);
     
     /*demo setup*/
-
-    sprite = gf2d_sprite_load_image("images/backgrounds/bg_flat.png");
+	//for (i = 0; i < SIZE; i++)
+	//{
+	//	enqueue(&queue, &bricklist[i], bricklist->width);
+	//}
+	//for (i = 0; i < SIZE; i++)
+	//{
+	//	dequeue(&queue);
+	//}
+	for (i = 0; i < SIZE; i++)
+	{
+		enqueue(&queue, &bricklist[i], bricklist->width);
+	}
+	
+	dequeue(&queue);
+	
+    
+	sprite = gf2d_sprite_load_image("images/backgrounds/bg_flat.png");
     brick = gf2d_sprite_load_all("images/brick.png",32,32,16);
     mouse = gf2d_sprite_load_all("images/pointer.png",32,32,16);
     /*main game loop*/
+
+
     while(!done)
     {
         SDL_PumpEvents();   // update SDL's internal event structures
